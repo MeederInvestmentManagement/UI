@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jun 18 08:15:09 2025
+Created on Wed Jun 18
 
 @author: jdevore
 """
@@ -8,25 +8,30 @@ Created on Wed Jun 18 08:15:09 2025
 import streamlit as st
 import pandas as pd
 from Calculator import add_two_to_numbers
-from io import BytesIO
+from io import BytesIO # for creating a file in memory
+import re  # for cleaning the option name for filenames
 
 st.set_page_config(layout="wide", page_title="Excel A1 Reader & Calculator")
 
-st.write("## Upload an Excel File for Processing")
+# Main title
+st.markdown("## 📁 Please upload an Excel file")
 
-# File uploader (moved from sidebar to main page)
-uploaded_file = st.file_uploader("### 📤 Drag and drop or browse to upload an Excel file (.xlsx)", type=["xlsx"])
+# File uploader (main area)
+uploaded_file = st.file_uploader(
+    "### Drag and drop or browse to upload (.xlsx only)", type=["xlsx"]
+)
 
-# Dropdown menu (moved below the uploader)
+# Dropdown menu for actions
 option = st.selectbox(
     "Choose an action to perform:",
     ("Read cell A1", "Preview sheet", "Show entire file", "Add 2 to all numbers"),
     index=0
 )
 
-# Excel processing
+# Excel file handling
 if uploaded_file:
     try:
+        # Read uploaded Excel file
         df = pd.read_excel(uploaded_file, header=None)
 
         if option == "Read cell A1":
@@ -46,16 +51,22 @@ if uploaded_file:
             st.write("### Modified DataFrame (2 added to all numeric cells):")
             st.dataframe(modified_df)
 
-            # Create a download link for the modified file
+            # Create downloadable Excel file
             output = BytesIO()
             with pd.ExcelWriter(output, engine='openpyxl') as writer:
                 modified_df.to_excel(writer, index=False, header=False)
             output.seek(0)
 
+            # Create a clean filename based on upload and action
+            base_filename = uploaded_file.name.rsplit('.', 1)[0]
+            clean_option = re.sub(r'\W+', '_', option.strip())
+            final_filename = f"{base_filename}_{clean_option}.xlsx"
+
+            # Download button
             st.download_button(
                 label="📥 Download Modified Excel File",
                 data=output,
-                file_name="modified_file.xlsx",
+                file_name=final_filename,
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
 
