@@ -40,9 +40,9 @@ if uploaded_file:
             st.dataframe(df)
 
         elif option == "Add 2 to all numbers":
-    modified_df = add_two_to_numbers(df)
-    st.write("### Modified DataFrame (2 added to all numeric cells):")
-    st.dataframe(modified_df)
+            modified_df = add_two_to_numbers(df)
+            st.write("### Modified DataFrame (2 added to all numeric cells):")
+            st.dataframe(modified_df)
 
     # Create a download link for the modified file
     from io import BytesIO
