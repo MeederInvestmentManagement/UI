@@ -8,19 +8,18 @@ Created on Wed Jun 18 08:15:09 2025
 import streamlit as st
 import pandas as pd
 from Calculator import add_two_to_numbers
-from io import BytesIO  
+from io import BytesIO
 
 st.set_page_config(layout="wide", page_title="Excel A1 Reader & Calculator")
 
 st.write("## Upload an Excel File for Processing")
-st.sidebar.write("## Upload your Excel file :page_facing_up:")
 
-# File uploader
-uploaded_file = st.sidebar.file_uploader("Upload Excel file", type=["xlsx"])
+# File uploader (moved from sidebar to main page)
+uploaded_file = st.file_uploader("### 📤 Drag and drop or browse to upload an Excel file (.xlsx)", type=["xlsx"])
 
-# Dropdown under file uploader
-option = st.sidebar.selectbox(
-    "Choose a sheet option:",
+# Dropdown menu (moved below the uploader)
+option = st.selectbox(
+    "Choose an action to perform:",
     ("Read cell A1", "Preview sheet", "Show entire file", "Add 2 to all numbers"),
     index=0
 )
@@ -35,9 +34,11 @@ if uploaded_file:
             st.success(f"Value in cell A1: `{value_a1}`")
 
         elif option == "Preview sheet":
+            st.write("### Preview of the first 10 rows:")
             st.dataframe(df.head(10))
 
         elif option == "Show entire file":
+            st.write("### Entire Excel Sheet:")
             st.dataframe(df)
 
         elif option == "Add 2 to all numbers":
